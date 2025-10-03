@@ -53,9 +53,13 @@ router.get("/", auth.optional, function(req, res, next) {
     query.tagList = { $in: [req.query.tag] };
   }
 
+  // Validate and sanitize user input before querying
+  const sellerUsername = typeof req.query.seller === "string" ? req.query.seller.trim() : null;
+  const favoritedUsername = typeof req.query.favorited === "string" ? req.query.favorited.trim() : null;
+
   Promise.all([
-    req.query.seller ? User.findOne({ username: req.query.seller }) : null,
-    req.query.favorited ? User.findOne({ username: req.query.favorited }) : null
+    sellerUsername ? User.findOne({ username: sellerUsername }) : null,
+    favoritedUsername ? User.findOne({ username: favoritedUsername }) : null
   ])
     .then(function(results) {
       var seller = results[0];
